@@ -7,7 +7,7 @@ namespace fairpool {
 FairResourcePool::FairResourcePool(int totalSlots)
     : totalSlots_(totalSlots < 0 ? 0 : totalSlots) {
     for (int slot = 1; slot <= totalSlots_; ++slot) {
-        freeSlots_.push_back(slot);
+        freeSlots_.push_back(FreeSlot{slot, 0});
     }
 }
 
@@ -41,24 +41,28 @@ void FairResourcePool::dispatchNextLocked(int slotId, int currentTick) {
         return;
     }
 
-    // No active waiter — return slot to the free pool.
-    freeSlots_.push_back(slotId);
+    // No active waiter — return slot to the free pool with its release tick.
+    freeSlots_.push_back(FreeSlot{slotId, currentTick});
 }
 
 std::optional<AcquisitionGrant> FairResourcePool::tryAcquire(int arrivalTick,
                                                              int jobId,
-                                                             TimePoint deadlineTp) {
+                                                             TimePoint deadlineTp,
+                                                             const std::function<void()>& onEntered) {
     std::unique_lock<std::mutex> lock(mutex_);
 
     // Fast path: if a slot is immediately available and no earlier job is waiting.
     if (!freeSlots_.empty() && waitQueue_.empty()) {
-        int slotId = freeSlots_.front();
+        FreeSlot slot = freeSlots_.front();
         freeSlots_.pop_front();
         ++activeSlots_;
         if (activeSlots_ > peakActiveSlots_) {
             peakActiveSlots_ = activeSlots_;
         }
-        return AcquisitionGrant{slotId, arrivalTick};
+        if (onEntered) {
+            onEntered();
+        }
+        return AcquisitionGrant{slot.slotId, std::max(arrivalTick, slot.availableFromTick)};
     }
 
     // Slow path: register in strict FCFS order and block without busy-waiting.
@@ -66,6 +70,10 @@ std::optional<AcquisitionGrant> FairResourcePool::tryAcquire(int arrivalTick,
     waiter->arrivalTick = arrivalTick;
     waiter->jobId = jobId;
     insertWaiterOrdered(waiter);
+
+    if (onEntered) {
+        onEntered();
+    }
 
     cv_.wait_until(lock, deadlineTp, [&]() {
         return waiter->granted;

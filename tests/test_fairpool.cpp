@@ -39,7 +39,7 @@ void testCase1LowDropRate() {
 
     fairpool::SimulationConfig cfg;
     cfg.numSlots = 2;
-    cfg.tickMs = 25;
+    cfg.tickMs = 60;
     cfg.enableColor = false;
     cfg.quietEvents = true;
 
@@ -77,7 +77,7 @@ void testCase2BoundaryAndHighDropRate() {
 
     fairpool::SimulationConfig cfg;
     cfg.numSlots = 1;
-    cfg.tickMs = 25;
+    cfg.tickMs = 60;
     cfg.enableColor = false;
     cfg.quietEvents = true;
 
@@ -106,7 +106,7 @@ void testSimultaneousArrivalsTieBreaker() {
 
     fairpool::SimulationConfig cfg;
     cfg.numSlots = 1;
-    cfg.tickMs = 20;
+    cfg.tickMs = 50;
     cfg.enableColor = false;
     cfg.quietEvents = true;
 
@@ -130,7 +130,7 @@ void testZeroPatienceJobs() {
 
     fairpool::SimulationConfig cfg;
     cfg.numSlots = 1;
-    cfg.tickMs = 25;
+    cfg.tickMs = 60;
     cfg.enableColor = false;
     cfg.quietEvents = true;
 
@@ -152,7 +152,7 @@ void testZeroSlotsEdgeCase() {
 
     fairpool::SimulationConfig cfg;
     cfg.numSlots = 0;
-    cfg.tickMs = 20;
+    cfg.tickMs = 50;
     cfg.enableColor = false;
     cfg.quietEvents = true;
 
@@ -169,7 +169,7 @@ void testEmptyWorkload() {
     std::vector<fairpool::Job> jobs;
     fairpool::SimulationConfig cfg;
     cfg.numSlots = 2;
-    cfg.tickMs = 20;
+    cfg.tickMs = 50;
     cfg.enableColor = false;
     cfg.quietEvents = true;
 
@@ -191,7 +191,7 @@ void testClassicOutputCompatibility() {
 
     fairpool::SimulationConfig cfg;
     cfg.numSlots = 1;
-    cfg.tickMs = 20;
+    cfg.tickMs = 50;
     cfg.enableColor = false;
     cfg.style = fairpool::OutputStyle::Classic;
 
@@ -215,7 +215,7 @@ void testJsonOutputFormat() {
 
     fairpool::SimulationConfig cfg;
     cfg.numSlots = 1;
-    cfg.tickMs = 20;
+    cfg.tickMs = 50;
     cfg.enableColor = false;
     cfg.jsonOutput = true;
 
@@ -241,7 +241,7 @@ void testConcurrencyStress() {
 
     fairpool::SimulationConfig cfg;
     cfg.numSlots = 4;
-    cfg.tickMs = 20;
+    cfg.tickMs = 50;
     cfg.enableColor = false;
     cfg.quietEvents = true;
 

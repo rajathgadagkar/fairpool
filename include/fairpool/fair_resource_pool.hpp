@@ -3,6 +3,7 @@
 #include <chrono>
 #include <condition_variable>
 #include <deque>
+#include <functional>
 #include <memory>
 #include <mutex>
 #include <optional>
@@ -51,11 +52,15 @@ public:
      * @param arrivalTick   Logical arrival tick of the requesting job.
      * @param jobId         1-based job ID used as FCFS tie-breaker.
      * @param deadlineTp    Wall-clock deadline (including boundary grace).
+     * @param onEntered     Optional callback invoked while holding the pool lock
+     *                      right after the job has either acquired a slot or been
+     *                      inserted into the FCFS wait queue.
      * @return AcquisitionGrant if a slot was acquired, or std::nullopt on timeout.
      */
     std::optional<AcquisitionGrant> tryAcquire(int arrivalTick,
                                                int jobId,
-                                               TimePoint deadlineTp);
+                                               TimePoint deadlineTp,
+                                               const std::function<void()>& onEntered = nullptr);
 
     /**
      * @brief Releases a previously acquired slot and wakes the next FCFS waiter.
@@ -76,6 +81,11 @@ public:
     int capacity() const { return totalSlots_; }
 
 private:
+    struct FreeSlot {
+        int slotId = 0;
+        int availableFromTick = 0;
+    };
+
     struct Waiter {
         int arrivalTick = 0;
         int jobId = 0;
@@ -91,7 +101,7 @@ private:
     int totalSlots_;
     mutable std::mutex mutex_;
     std::condition_variable cv_;
-    std::deque<int> freeSlots_;
+    std::deque<FreeSlot> freeSlots_;
     std::vector<std::shared_ptr<Waiter>> waitQueue_;
     int activeSlots_ = 0;
     int peakActiveSlots_ = 0;

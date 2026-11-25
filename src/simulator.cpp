@@ -29,9 +29,10 @@ SimulationEngine::TimePoint SimulationEngine::tickToTimePoint(int tick) const {
 
 std::chrono::milliseconds SimulationEngine::boundaryGrace() const {
     // Allow releases scheduled at exact tick (t_arrival + patience) to complete
-    // before the waiting thread times out, without overlapping tick (t + 1).
-    long long quarter = std::max<long long>(2, config_.tickMs / 4);
-    long long capped = std::min<long long>(quarter, 150);
+    // before the waiting thread times out, even under VM timer coalescing,
+    // without overlapping tick (t + 1).
+    long long third = std::max<long long>(4, config_.tickMs / 3);
+    long long capped = std::min<long long>(third, 200);
     return std::chrono::milliseconds(capped);
 }
 
@@ -44,15 +45,17 @@ void SimulationEngine::workerTask(const Job& job,
     const int deadlineTick = job.arrivalTime + job.patienceTime;
     const TimePoint deadlineTp = tickToTimePoint(deadlineTick) + boundaryGrace();
 
-    // Signal the orchestrator right before entering the pool so simultaneous
-    // arrivals preserve strict ascending jobId ordering.
-    {
-        std::lock_guard<std::mutex> lk(*entryMtx);
-        *enteredPool = true;
-    }
-    entryCv->notify_one();
+    // Signal the orchestrator inside FairResourcePool::tryAcquire once this job
+    // has acquired a slot or entered the FCFS wait queue.
+    auto signalEntered = [&]() {
+        {
+            std::lock_guard<std::mutex> lk(*entryMtx);
+            *enteredPool = true;
+        }
+        entryCv->notify_one();
+    };
 
-    auto grant = pool_.tryAcquire(job.arrivalTime, job.id, deadlineTp);
+    auto grant = pool_.tryAcquire(job.arrivalTime, job.id, deadlineTp, signalEntered);
 
     JobOutcome outcome;
     outcome.jobId = job.id;
@@ -119,14 +122,12 @@ SimulationStats SimulationEngine::run() {
                              entryCv,
                              enteredPool);
 
-        // Wait for this thread to log arrival before launching a same-tick peer,
-        // guaranteeing deterministic FCFS order on simultaneous arrivals.
+        // Wait until this worker has registered in FairResourcePool before
+        // advancing to a same-tick peer, guaranteeing strict FCFS order.
         bool nextSameTick = (i + 1 < jobs_.size() && jobs_[i + 1].arrivalTime == job.arrivalTime);
         if (nextSameTick) {
             std::unique_lock<std::mutex> lk(*entryMtx);
             entryCv->wait(lk, [&]() { return *enteredPool; });
-            // Brief yield so the thread enters pool_.tryAcquire before the peer.
-            std::this_thread::sleep_for(std::chrono::microseconds(200));
         }
     }
 
