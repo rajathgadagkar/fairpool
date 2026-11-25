@@ -50,6 +50,8 @@ public:
      * @brief Attempts to acquire a slot in strict FCFS order before the deadline.
      *
      * @param arrivalTick   Logical arrival tick of the requesting job.
+     * @param serviceTicks  Logical service duration (W_i) to track active release ticks.
+     * @param deadlineTick  Logical inclusive patience deadline (T_i + P_i).
      * @param jobId         1-based job ID used as FCFS tie-breaker.
      * @param deadlineTp    Wall-clock deadline (including boundary grace).
      * @param onEntered     Optional callback invoked while holding the pool lock
@@ -58,6 +60,8 @@ public:
      * @return AcquisitionGrant if a slot was acquired, or std::nullopt on timeout.
      */
     std::optional<AcquisitionGrant> tryAcquire(int arrivalTick,
+                                               int serviceTicks,
+                                               int deadlineTick,
                                                int jobId,
                                                TimePoint deadlineTp,
                                                const std::function<void()>& onEntered = nullptr);
@@ -88,6 +92,7 @@ private:
 
     struct Waiter {
         int arrivalTick = 0;
+        int serviceTicks = 0;
         int jobId = 0;
         bool granted = false;
         bool cancelled = false;
@@ -97,12 +102,14 @@ private:
 
     void insertWaiterOrdered(const std::shared_ptr<Waiter>& waiter);
     void dispatchNextLocked(int slotId, int currentTick);
+    bool hasPendingReleaseAtOrBeforeLocked(int tick) const;
 
     int totalSlots_;
     mutable std::mutex mutex_;
     std::condition_variable cv_;
     std::deque<FreeSlot> freeSlots_;
     std::vector<std::shared_ptr<Waiter>> waitQueue_;
+    std::vector<std::pair<int, int>> activeFinishTicks_; ///< (slotId, finishTick)
     int activeSlots_ = 0;
     int peakActiveSlots_ = 0;
 };

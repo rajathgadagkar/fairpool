@@ -55,7 +55,7 @@ void SimulationEngine::workerTask(const Job& job,
         entryCv->notify_one();
     };
 
-    auto grant = pool_.tryAcquire(job.arrivalTime, job.id, deadlineTp, signalEntered);
+    auto grant = pool_.tryAcquire(job.arrivalTime, job.serviceTime, deadlineTick, job.id, deadlineTp, signalEntered);
 
     JobOutcome outcome;
     outcome.jobId = job.id;
