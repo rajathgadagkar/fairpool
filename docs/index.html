@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FairPool — Interactive FCFS Resource Pool &amp; Concurrency Simulator</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1><span>FairPool</span> Concurrency Simulator</h1>
+        <p class="subtitle">Interactive FCFS Bounded-Resource Pool &middot; Inclusive Patience Deadlines &middot; Capacity Scaling Telemetry</p>
+      </div>
+      <div class="badge-row">
+        <span class="badge">C++20 &middot; Strict FCFS</span>
+        <span class="badge">Zero Busy-Waiting</span>
+      </div>
+    </header>
+
+    <div class="grid">
+      <div class="card">
+        <h2>Workload Configuration</h2>
+        <div class="presets">
+          <button data-preset="case1">Case 1 (5 jobs, 2 slots)</button>
+          <button data-preset="case2">Case 2 (3 jobs, 1 slot)</button>
+          <button data-preset="burst">Simultaneous Burst</button>
+          <button data-preset="heavy">Heavy Contention</button>
+        </div>
+
+        <div class="controls-row">
+          <div>
+            <label for="slotsInput">Resource Slots (M)</label>
+            <input id="slotsInput" type="number" min="0" max="16" value="2" />
+          </div>
+          <div>
+            <label for="thresholdInput">Scale Threshold (%)</label>
+            <input id="thresholdInput" type="number" min="1" max="100" value="25" />
+          </div>
+        </div>
+
+        <div class="controls-row">
+          <div>
+            <label for="styleSelect">Event Log Format</label>
+            <select id="styleSelect">
+              <option value="standard">Standard (Job / Slot)</option>
+              <option value="classic">Classic Compatibility</option>
+            </select>
+          </div>
+          <div>
+            <label for="speedSelect">Playback Speed</label>
+            <select id="speedSelect">
+              <option value="0">Instant</option>
+              <option value="220" selected>Animated (220ms/tick)</option>
+              <option value="500">Slow (500ms/tick)</option>
+            </select>
+          </div>
+        </div>
+
+        <label for="jobsInput">Jobs &mdash; one per line: <code>Arrival Service Patience</code></label>
+        <textarea id="jobsInput">6 3 5
+3 4 3
+6 5 2
+2 9 6
+8 5 2</textarea>
+
+        <div class="action-bar">
+          <button class="primary" id="runBtn">Run Simulation</button>
+          <button id="stopBtn">Stop</button>
+        </div>
+      </div>
+
+      <div>
+        <div class="metrics">
+          <div class="metric">
+            <div class="metric-label">Dropped / Total</div>
+            <div class="metric-val" id="mDropped">&mdash;</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Drop Rate</div>
+            <div class="metric-val" id="mDropRate">&mdash;</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">More Slots Needed?</div>
+            <div class="metric-val" id="mVerdict">&mdash;</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Avg Utilization</div>
+            <div class="metric-val" id="mUtil">&mdash;</div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom: 18px;">
+          <h2>
+            <span>FCFS Gantt Execution Timeline</span>
+            <span id="tickCounter" style="font-size:0.82rem;color:var(--cyan);font-family:monospace;">t = 0</span>
+          </h2>
+          <div class="gantt-wrap" id="ganttContainer"></div>
+        </div>
+
+        <div class="card">
+          <h2>Real-Time Event Stream</h2>
+          <div class="console" id="consoleOut"></div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      Built by Rajath Gadagkar &middot; FairPool C++20 Multithreaded FCFS Resource Pool
+    </footer>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

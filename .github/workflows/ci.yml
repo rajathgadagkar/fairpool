@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    name: Build & Test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, macos-latest ]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure CMake
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build library, CLI, and test suite
+        run: cmake --build build --parallel
+
+      - name: Run CTest unit & concurrency tests
+        run: ctest --test-dir build --output-on-failure
+
+      - name: Verify CLI fixtures (Standard, Classic, and JSON modes)
+        run: |
+          ./build/fairpool --input tests/fixtures/case1_low_drop.in --tick-ms 25 --no-color
+          ./build/fairpool --input tests/fixtures/case2_high_drop.in --tick-ms 25 --no-color --classic
+          ./build/fairpool --input tests/fixtures/case1_low_drop.in --tick-ms 25 --json
+
+  sanitizers:
+    name: Sanitizers (ASan + UBSan + TSan on Ubuntu)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run AddressSanitizer & UndefinedBehaviorSanitizer
+        run: make sanitize-asan
+
+      - name: Run ThreadSanitizer
+        run: make sanitize-tsan

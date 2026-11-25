@@ -1,0 +1,14 @@
+# Build artifacts
+build/
+cmake-build-*/
+*.o
+*.obj
+*.out
+*.exe
+
+# macOS & IDE metadata
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo

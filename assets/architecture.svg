@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" width="960" height="440" font-family="ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+    <linearGradient id="accentBlue" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#6366f1"/>
+    </linearGradient>
+    <linearGradient id="accentGreen" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#14b8a6"/>
+    </linearGradient>
+    <linearGradient id="accentAmber" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#f97316"/>
+    </linearGradient>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrowCyan" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arrowGreen" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="440" rx="16" fill="url(#bg)"/>
+  <text x="480" y="38" text-anchor="middle" fill="#f8fafc" font-size="20" font-weight="700" letter-spacing="0.3">FairPool — Multithreaded FCFS Resource Pool Architecture</text>
+  <text x="480" y="58" text-anchor="middle" fill="#94a3b8" font-size="12">Drift-free steady_clock scheduling · Strict (T_i, ID) FCFS fairness · Non-busy-waiting timeouts · Thread-safe telemetry</text>
+
+  <!-- Stage 1: CLI & Workload Parser -->
+  <rect x="30" y="95" width="165" height="125" rx="12" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5"/>
+  <rect x="30" y="95" width="165" height="28" rx="12" fill="url(#accentBlue)"/>
+  <text x="112" y="114" text-anchor="middle" fill="#0f172a" font-size="12" font-weight="700">1. CLI &amp; Workload</text>
+  <text x="44" y="143" fill="#e2e8f0" font-size="11.5" font-weight="600">src/main.cpp</text>
+  <text x="44" y="162" fill="#94a3b8" font-size="11">• Parses N, M, (T, W, P)</text>
+  <text x="44" y="179" fill="#94a3b8" font-size="11">• --tick-ms, --threshold</text>
+  <text x="44" y="196" fill="#94a3b8" font-size="11">• --json / --classic</text>
+
+  <!-- Stage 2: SimulationEngine -->
+  <rect x="235" y="95" width="205" height="125" rx="12" fill="#1e293b" stroke="#818cf8" stroke-width="1.5"/>
+  <rect x="235" y="95" width="205" height="28" rx="12" fill="#6366f1"/>
+  <text x="337" y="114" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="700">2. SimulationEngine</text>
+  <text x="249" y="143" fill="#e2e8f0" font-size="11.5" font-weight="600">src/simulator.cpp</text>
+  <text x="249" y="162" fill="#94a3b8" font-size="11">• Sorts jobs by (arrival, id)</text>
+  <text x="249" y="179" fill="#94a3b8" font-size="11">• Drift-free steady_clock grid</text>
+  <text x="249" y="196" fill="#94a3b8" font-size="11">• Arrival-wave handshake</text>
+
+  <!-- Stage 3: Worker Threads -->
+  <rect x="480" y="85" width="205" height="145" rx="12" fill="#1e293b" stroke="#34d399" stroke-width="1.5"/>
+  <rect x="480" y="85" width="205" height="28" rx="12" fill="url(#accentGreen)"/>
+  <text x="582" y="104" text-anchor="middle" fill="#0f172a" font-size="12" font-weight="700">3. Concurrent Workers</text>
+  <rect x="496" y="124" width="173" height="26" rx="6" fill="#0f172a" stroke="#334155"/>
+  <text x="582" y="141" text-anchor="middle" fill="#a7f3d0" font-size="11">std::thread — Job 1 (T₁, W₁, P₁)</text>
+  <rect x="496" y="156" width="173" height="26" rx="6" fill="#0f172a" stroke="#334155"/>
+  <text x="582" y="173" text-anchor="middle" fill="#a7f3d0" font-size="11">std::thread — Job 2 (T₂, W₂, P₂)</text>
+  <rect x="496" y="188" width="173" height="26" rx="6" fill="#0f172a" stroke="#334155"/>
+  <text x="582" y="205" text-anchor="middle" fill="#a7f3d0" font-size="11">std::thread — Job N (Tₙ, Wₙ, Pₙ)</text>
+
+  <!-- Stage 4: EventLogger & Telemetry -->
+  <rect x="725" y="95" width="205" height="125" rx="12" fill="#1e293b" stroke="#f59e0b" stroke-width="1.5"/>
+  <rect x="725" y="95" width="205" height="28" rx="12" fill="url(#accentAmber)"/>
+  <text x="827" y="114" text-anchor="middle" fill="#0f172a" font-size="12" font-weight="700">4. Logger &amp; Telemetry</text>
+  <text x="739" y="143" fill="#e2e8f0" font-size="11.5" font-weight="600">src/logger.cpp</text>
+  <text x="739" y="162" fill="#94a3b8" font-size="11">• Mutex-serialized ANSI logs</text>
+  <text x="739" y="179" fill="#94a3b8" font-size="11">• Drop rate &amp; utilization stats</text>
+  <text x="739" y="196" fill="#94a3b8" font-size="11">• Scaling verdict (≥ 25%)</text>
+
+  <!-- Core Synchronization Layer: FairResourcePool -->
+  <rect x="195" y="268" width="570" height="142" rx="14" fill="#0b1220" stroke="#38bdf8" stroke-width="1.8"/>
+  <rect x="195" y="268" width="570" height="30" rx="14" fill="#0284c7"/>
+  <text x="480" y="288" text-anchor="middle" fill="#f8fafc" font-size="13" font-weight="700">FairResourcePool (src/fair_resource_pool.cpp) — Synchronization Core</text>
+
+  <!-- Sub-boxes inside FairResourcePool -->
+  <rect x="215" y="312" width="165" height="82" rx="8" fill="#1e293b" stroke="#475569"/>
+  <text x="297" y="332" text-anchor="middle" fill="#38bdf8" font-size="11.5" font-weight="700">Free Slot Deque</text>
+  <text x="297" y="352" text-anchor="middle" fill="#cbd5e1" font-size="11">Slots #1 ... #M</text>
+  <text x="297" y="370" text-anchor="middle" fill="#94a3b8" font-size="10">Tracks active &amp; peak</text>
+  <text x="297" y="384" text-anchor="middle" fill="#94a3b8" font-size="10">concurrency metrics</text>
+
+  <rect x="398" y="312" width="175" height="82" rx="8" fill="#1e293b" stroke="#475569"/>
+  <text x="485" y="332" text-anchor="middle" fill="#a78bfa" font-size="11.5" font-weight="700">FCFS Wait Queue</text>
+  <text x="485" y="352" text-anchor="middle" fill="#cbd5e1" font-size="11">Ordered by (T_i, jobId)</text>
+  <text x="485" y="370" text-anchor="middle" fill="#94a3b8" font-size="10">cv.wait_until(deadline + ε)</text>
+  <text x="485" y="384" text-anchor="middle" fill="#94a3b8" font-size="10">Zero busy-waiting</text>
+
+  <rect x="591" y="312" width="155" height="82" rx="8" fill="#1e293b" stroke="#475569"/>
+  <text x="668" y="332" text-anchor="middle" fill="#34d399" font-size="11.5" font-weight="700">Boundary Grace</text>
+  <text x="668" y="352" text-anchor="middle" fill="#cbd5e1" font-size="11">t_rel == T_i + P_i</text>
+  <text x="668" y="370" text-anchor="middle" fill="#94a3b8" font-size="10">Inclusive deadline</text>
+  <text x="668" y="384" text-anchor="middle" fill="#94a3b8" font-size="10">deterministically won</text>
+
+  <!-- Arrows -->
+  <line x1="195" y1="158" x2="233" y2="158" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="440" y1="158" x2="478" y2="158" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="685" y1="158" x2="723" y2="158" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Bidirectional arrows between Workers and FairResourcePool -->
+  <line x1="548" y1="230" x2="548" y2="266" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrowCyan)"/>
+  <text x="466" y="253" fill="#38bdf8" font-size="10.5" font-weight="600">tryAcquire(T, id, ddl)</text>
+
+  <line x1="616" y1="266" x2="616" y2="230" stroke="#34d399" stroke-width="2" marker-end="url(#arrowGreen)"/>
+  <text x="625" y="253" fill="#34d399" font-size="10.5" font-weight="600">grant / release(slot)</text>
+</svg>

@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 360" width="920" height="360" font-family="ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <defs>
+    <linearGradient id="bg3" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="920" height="360" rx="16" fill="url(#bg3)"/>
+  <text x="460" y="34" text-anchor="middle" fill="#f8fafc" font-size="18" font-weight="700">Deterministic FCFS Execution Timeline — Sample Case 1 (5 Jobs, 2 Slots)</text>
+  <text x="460" y="53" text-anchor="middle" fill="#94a3b8" font-size="11.5">Demonstrating lower-ID tie-breaking (Job 1 vs Job 3 at t=6) and exact boundary grant (Job 5 at t=10)</text>
+
+  <!-- Grid ticks t=0..15 -->
+  <!-- x = 120 + t * 48 -->
+  <g stroke="#334155" stroke-width="1" stroke-dasharray="3,3">
+    <line x1="120" y1="75" x2="120" y2="295"/>
+    <line x1="168" y1="75" x2="168" y2="295"/>
+    <line x1="216" y1="75" x2="216" y2="295"/>
+    <line x1="264" y1="75" x2="264" y2="295"/>
+    <line x1="312" y1="75" x2="312" y2="295"/>
+    <line x1="360" y1="75" x2="360" y2="295"/>
+    <line x1="408" y1="75" x2="408" y2="295"/>
+    <line x1="456" y1="75" x2="456" y2="295"/>
+    <line x1="504" y1="75" x2="504" y2="295"/>
+    <line x1="552" y1="75" x2="552" y2="295"/>
+    <line x1="600" y1="75" x2="600" y2="295"/>
+    <line x1="648" y1="75" x2="648" y2="295"/>
+    <line x1="696" y1="75" x2="696" y2="295"/>
+    <line x1="744" y1="75" x2="744" y2="295"/>
+    <line x1="792" y1="75" x2="792" y2="295"/>
+    <line x1="840" y1="75" x2="840" y2="295"/>
+  </g>
+
+  <!-- Tick labels -->
+  <g fill="#94a3b8" font-size="11" text-anchor="middle">
+    <text x="120" y="313">0</text><text x="168" y="313">1</text><text x="216" y="313">2</text>
+    <text x="264" y="313">3</text><text x="312" y="313">4</text><text x="360" y="313">5</text>
+    <text x="408" y="313">6</text><text x="456" y="313">7</text><text x="504" y="313">8</text>
+    <text x="552" y="313">9</text><text x="600" y="313">10</text><text x="648" y="313">11</text>
+    <text x="696" y="313">12</text><text x="744" y="313">13</text><text x="792" y="313">14</text>
+    <text x="840" y="313">15s</text>
+  </g>
+
+  <!-- Row Labels -->
+  <g fill="#e2e8f0" font-size="12" font-weight="600">
+    <text x="24" y="106">Job 4 (2,9,6)</text>
+    <text x="24" y="150">Job 2 (3,4,3)</text>
+    <text x="24" y="194">Job 1 (6,3,5)</text>
+    <text x="24" y="238">Job 3 (6,5,2)</text>
+    <text x="24" y="282">Job 5 (8,5,2)</text>
+  </g>
+
+  <!-- Job 4: runs [2, 11] on Slot #1 -->
+  <rect x="216" y="88" width="432" height="26" rx="6" fill="#0ea5e9"/>
+  <text x="432" y="105" text-anchor="middle" fill="#0f172a" font-size="11.5" font-weight="700">Slot #1 · Active [2 → 11]</text>
+
+  <!-- Job 2: runs [3, 7] on Slot #2 -->
+  <rect x="264" y="132" width="192" height="26" rx="6" fill="#10b981"/>
+  <text x="360" y="149" text-anchor="middle" fill="#0f172a" font-size="11.5" font-weight="700">Slot #2 · [3 → 7]</text>
+
+  <!-- Job 1: waits [6, 7], runs [7, 10] on Slot #2 -->
+  <rect x="408" y="176" width="48" height="26" rx="4" fill="#475569" stroke="#94a3b8" stroke-dasharray="3,2"/>
+  <text x="432" y="193" text-anchor="middle" fill="#e2e8f0" font-size="10">wait</text>
+  <rect x="456" y="176" width="144" height="26" rx="6" fill="#10b981"/>
+  <text x="528" y="193" text-anchor="middle" fill="#0f172a" font-size="11.5" font-weight="700">Slot #2 · [7 → 10]</text>
+
+  <!-- Job 3: waits [6, 8], TIMED OUT at t=8 -->
+  <rect x="408" y="220" width="96" height="26" rx="4" fill="#475569" stroke="#f87171" stroke-dasharray="3,2"/>
+  <text x="456" y="237" text-anchor="middle" fill="#fecaca" font-size="10">wait (2s)</text>
+  <circle cx="504" cy="233" r="9" fill="#ef4444"/>
+  <text x="504" y="237" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="700">✕</text>
+  <text x="522" y="237" fill="#f87171" font-size="11" font-weight="600">Timed out at t=8</text>
+
+  <!-- Job 5: waits [8, 10], boundary grant at t=10, runs [10, 15] on Slot #2 -->
+  <rect x="504" y="264" width="96" height="26" rx="4" fill="#475569" stroke="#fbbf24" stroke-dasharray="3,2"/>
+  <text x="552" y="281" text-anchor="middle" fill="#fde68a" font-size="10">wait (2s)</text>
+  <rect x="600" y="264" width="240" height="26" rx="6" fill="#10b981"/>
+  <text x="720" y="281" text-anchor="middle" fill="#0f172a" font-size="11.5" font-weight="700">Slot #2 · Boundary Grant [10 → 15]</text>
+
+  <!-- Legend -->
+  <rect x="120" y="328" width="14" height="14" rx="3" fill="#0ea5e9"/>
+  <text x="140" y="339" fill="#cbd5e1" font-size="11">Slot #1 Active</text>
+  <rect x="240" y="328" width="14" height="14" rx="3" fill="#10b981"/>
+  <text x="260" y="339" fill="#cbd5e1" font-size="11">Slot #2 Active</text>
+  <rect x="360" y="328" width="14" height="14" rx="3" fill="#475569" stroke="#94a3b8"/>
+  <text x="380" y="339" fill="#cbd5e1" font-size="11">FCFS Queue Wait</text>
+  <circle cx="508" cy="335" r="6" fill="#ef4444"/>
+  <text x="520" y="339" fill="#f87171" font-size="11">Patience Timeout (1/5 = 20% → Scaling: No)</text>
+</svg>

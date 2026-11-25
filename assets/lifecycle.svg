@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 330" width="920" height="330" font-family="ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <defs>
+    <linearGradient id="bg2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+    <marker id="arrW" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#cbd5e1"/>
+    </marker>
+    <marker id="arrG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+    <marker id="arrR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f87171"/>
+    </marker>
+    <marker id="arrY" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#fbbf24"/>
+    </marker>
+  </defs>
+
+  <rect width="920" height="330" rx="16" fill="url(#bg2)"/>
+  <text x="460" y="36" text-anchor="middle" fill="#f8fafc" font-size="18" font-weight="700">Worker Thread Lifecycle &amp; FCFS Patience State Machine</text>
+  <text x="460" y="55" text-anchor="middle" fill="#94a3b8" font-size="11.5">ANSI color-coded state transitions with non-busy-waiting condition-variable timeout</text>
+
+  <!-- State 1: Arrived -->
+  <rect x="35" y="135" width="145" height="68" rx="12" fill="#1e293b" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="107" y="163" text-anchor="middle" fill="#f8fafc" font-size="13" font-weight="700">ARRIVED</text>
+  <text x="107" y="182" text-anchor="middle" fill="#94a3b8" font-size="10.5">t = T_i (White)</text>
+
+  <!-- State 2: Waiting -->
+  <rect x="245" y="135" width="175" height="68" rx="12" fill="#1e293b" stroke="#818cf8" stroke-width="2"/>
+  <text x="332" y="163" text-anchor="middle" fill="#c7d2fe" font-size="13" font-weight="700">FCFS WAITING</text>
+  <text x="332" y="182" text-anchor="middle" fill="#94a3b8" font-size="10.5">cv.wait_until(T_i + P_i + ε)</text>
+
+  <!-- State 3: Acquired / Active -->
+  <rect x="505" y="85" width="165" height="68" rx="12" fill="#064e3b" stroke="#34d399" stroke-width="2"/>
+  <text x="587" y="113" text-anchor="middle" fill="#a7f3d0" font-size="13" font-weight="700">ACQUIRED SLOT</text>
+  <text x="587" y="132" text-anchor="middle" fill="#6ee7b7" font-size="10.5">Hold for W_i ticks (Green)</text>
+
+  <!-- State 4: Completed -->
+  <rect x="735" y="85" width="150" height="68" rx="12" fill="#451a03" stroke="#fbbf24" stroke-width="2"/>
+  <text x="810" y="113" text-anchor="middle" fill="#fde68a" font-size="13" font-weight="700">COMPLETED</text>
+  <text x="810" y="132" text-anchor="middle" fill="#fcd34d" font-size="10.5">release(slot) (Yellow)</text>
+
+  <!-- State 5: Timed Out -->
+  <rect x="505" y="210" width="195" height="68" rx="12" fill="#450a0a" stroke="#f87171" stroke-width="2"/>
+  <text x="602" y="238" text-anchor="middle" fill="#fecaca" font-size="13" font-weight="700">TIMED OUT (DROPPED)</text>
+  <text x="602" y="257" text-anchor="middle" fill="#fca5a5" font-size="10.5">droppedCount++ (Red)</text>
+
+  <!-- Transitions -->
+  <line x1="180" y1="169" x2="243" y2="169" stroke="#cbd5e1" stroke-width="2" marker-end="url(#arrW)"/>
+  <text x="211" y="159" text-anchor="middle" fill="#94a3b8" font-size="10">pool busy</text>
+
+  <!-- Fast path Arrived -> Acquired -->
+  <path d="M 107 135 Q 107 72, 330 72 Q 520 72, 540 83" fill="none" stroke="#34d399" stroke-width="2" stroke-dasharray="5,4" marker-end="url(#arrG)"/>
+  <text x="325" y="88" text-anchor="middle" fill="#34d399" font-size="10.5" font-weight="600">Fast Path: free slot &amp; empty queue</text>
+
+  <!-- Waiting -> Acquired -->
+  <path d="M 420 155 L 503 125" fill="none" stroke="#34d399" stroke-width="2" marker-end="url(#arrG)"/>
+  <text x="458" y="128" text-anchor="middle" fill="#34d399" font-size="10">t ≤ T_i + P_i</text>
+
+  <!-- Acquired -> Completed -->
+  <line x1="670" y1="119" x2="733" y2="119" stroke="#fbbf24" stroke-width="2" marker-end="url(#arrY)"/>
+  <text x="701" y="109" text-anchor="middle" fill="#fbbf24" font-size="10">+W_i ticks</text>
+
+  <!-- Waiting -> Timed Out -->
+  <path d="M 420 185 L 503 235" fill="none" stroke="#f87171" stroke-width="2" marker-end="url(#arrR)"/>
+  <text x="456" y="226" text-anchor="middle" fill="#f87171" font-size="10">t &gt; T_i + P_i</text>
+
+  <!-- Footer Note -->
+  <rect x="35" y="294" width="850" height="24" rx="6" fill="#0b1220"/>
+  <text x="460" y="310" text-anchor="middle" fill="#94a3b8" font-size="11">Post-Simulation Verdict: if (droppedCount / N) ≥ 0.25 → Recommend Scaling ("Yes"), else Capacity Sufficient ("No")</text>
+</svg>
